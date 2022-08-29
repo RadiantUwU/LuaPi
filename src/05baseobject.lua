@@ -153,7 +153,7 @@ do
                     else
                         if acc.securityaccessor == "protected" then
                             local x = objinfo[x.type].protectedfields[k]
-                            if type(x) == "function" then
+                            if type(x) == "function" and not acc.static then
                                 return function(...)
                                     return x(t,...)
                                 end
@@ -161,7 +161,7 @@ do
                             return x
                         else
                             local x = c.privatefields[k]
-                            if type(x) == "function" then
+                            if type(x) == "function" and not acc.static then
                                 return function(...)
                                     return x(t,...)
                                 end
@@ -171,7 +171,7 @@ do
                     end
                 elseif co then
                     local x = objinfo[x.type].contents[k]
-                    if type(x) == "function" then
+                    if type(x) == "function" and not acc.static then
                         return function(...)
                             return x(t,...)
                         end
