@@ -12,30 +12,29 @@ do
             cls=cls
         }
     end
-    local final = {cls_builder__type="final"}
-    local field = {}
-    table.freeze(final)
+    local final = setmetatable({},{__metatable=false,__index={cls_builder__type="final"},__newindex=function(t,k,v) error("cannot set frozen table.") end})
+    local field = setmetatable({},{__metatable=false,__newindex=function(t,k,v) error("cannot set frozen table.") end})
     local function _static(o)
         o.cls_builder__static = true
         return o
     end
     local function static(accessor)
-        return function (str:string)
+        return function (str)
             return _static(accessor(str))
         end
     end
     local function extends(...)
         local t = {}
         for _,v in ipairs(table.pack(...)) do
-            if v.cls_builder__type == "metaclass" then
+            if v.cls_builder__type == "metaclass" or v.cls_builder__type == "final" then
                 table.insert(t,v)
-                continue
+            else
+                table.insert(t,base_obj(v))
             end
-            table.insert(t,base_obj(v))
         end
-        return unpack(t)
+        return table.unpack(t)
     end
-    local dictset = function (dict:{[string]:any},pre,func,cls_name,metaclass,processed_bases,isfinal)
+    local dictset = function (dict,pre,func,cls_name,metaclass,processed_bases,isfinal)
         local newdict = {}
         for k,v in pairs(dict) do
             if type(k) == "string" then
@@ -53,55 +52,51 @@ do
             end
         end
         if #pre > 0 then
-            return func(unpack(pre),cls_name,metaclass,processed_bases,isfinal,newdict)
+            return func(table.unpack(pre),cls_name,metaclass,processed_bases,isfinal,newdict)
         else
             return func(cls_name,metaclass,processed_bases,isfinal,newdict)
         end
     end
     local function class_func_custom(func,...)
         local pre = table.pack(...)
-        local function class_builder(cls_name: string)
+        local function class_builder(cls_name)
             return function (...)
                 local bases = table.pack(...)
                 local processed_bases = {}
                 local metaclass = nil
                 local isfinal = false
                 for _,v in ipairs(bases) do
-                    if type(v) == "string" then
-                        return dictset(bases,func,cls_name,metaclass,{},isfinal)
+                    if v.cls_builder__type ~= "base" and v.cls_builder__type ~= "metaclass" and v.cls_builder__type ~= "final" then
+                        return dictset(bases[1],pre,func,cls_name,metaclass,{},isfinal)
+                    end
+                    if v.cls_builder__type == "metaclass" then
+                        metaclass = v.cls
+                    elseif v.cls_builder__type == "final" then
+                        isfinal = true
                     else
-                        if v.cls_builder__type == "public" or v.cls_builder__type == "protected" or v.cls_builder__type == "private" then
-                            return dictset(bases,func,cls_name,metaclass,{},isfinal)
-                        end
-                        if v.cls_builder__type == "metaclass" then
-                            metaclass = v.cls
-                        elseif v.cls_builder__type == "final" then
-                            isfinal = true
-                        else
-                            table.insert(processed_bases,v.cls)
-                        end
+                        table.insert(processed_bases,v.cls)
                     end
                 end
-                return function(dict:{[string]:any})
+                return function(dict)
                     return dictset(dict,pre,func,cls_name,metaclass,processed_bases,isfinal)
                 end
             end
         end
         return class_builder
     end
-    local function private(str: string)
+    local function private(str)
         return {
             cls_builder__type="private",
             str=str
         }
     end
-    local function protected(str: string)
+    local function protected(str)
         return {
             cls_builder__type="protected",
             str=str
         }
     end
-    local function public(str: string)
+    local function public(str)
         return {
             cls_builder__type="public",
             str=str

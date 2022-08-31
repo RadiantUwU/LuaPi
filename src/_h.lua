@@ -10,10 +10,6 @@ else
     _isLuau = false
 end
 
-local _getfenv = getfenv
-local _setfenv = setfenv
-local curr_env = _getfenv(1)
-
 local __luapi = {}
 
 if _isLuau then

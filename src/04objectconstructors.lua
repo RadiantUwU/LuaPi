@@ -37,10 +37,11 @@ local function newType(env,name,metaclass,bases,final,dict)
 	local _o = objinfo[o]
 	_o.contents.__name__ = name
 	_o.bases = bases or {env.baseobject}
+	_o.contents.__bases__ = table_clone(_o.bases)
 	_o.final = final
 	_o.protectedfields = {}
 	_o.privatefields = {}
-	if not table.find(bases,env.baseobject) then
+	if not rawtable_find(bases,env.baseobject) then
 		table.insert(bases,env.baseobject)
 	end
 	_o.mro = {o}
@@ -52,13 +53,15 @@ local function newType(env,name,metaclass,bases,final,dict)
 			if objinfo[type].final then 
 				error("Cannot extend final class \""..objinfo[type].contents.__name__.."\"") 
 			end
-			local f = table.find(_o.mro, type)
+			local f = rawtable_find(_o.mro, type)
 			if f then
 				table.remove(_o.mro, f)
 			end
 			table.insert(_o.mro, type)
 		end
 	end
+	_o.contents.__mro__ = table_clone(_o.mro)
+	_o.contents.__fields__ = {}
 	_o.fields = setmetatable({},{__index=accessorinfodefault})
 	local t = _o.contents
 	local _t = _o.protectedfields
@@ -67,9 +70,9 @@ local function newType(env,name,metaclass,bases,final,dict)
 		local x
 		if type(k) == "string" then
 			x = {securityaccessor = "public",static=false,cls=weakref.new(o)}
-			_o.fields[k.str] = x
+			_o.fields[k] = x
 			if v ~= field_ty then
-				t[k.str] = v
+				t[k] = v
 				x.classowns = true
 			else
 				x.classowns = false
@@ -78,7 +81,7 @@ local function newType(env,name,metaclass,bases,final,dict)
 			local isstatic = false
 			x = {securityaccessor = k.cls_builder__type,static=isstatic,cls=weakref.new(o)}
 			if k.cls_builder__static then isstatic = true end
-			if k.cls_builder__type == "public" then
+			if k.cls_builder__type == "public" or table_find(force_public, k.str) then
 				_o.fields[k.str] = x
 				if v ~= field_ty then
 					t[k.str] = v
@@ -118,6 +121,15 @@ local function newType(env,name,metaclass,bases,final,dict)
 			end
 		end
 		return fields
-	end)(o,unpack(bases))
+	end)(o,table.unpack(bases))
+	local fi = _o.contents.__fields__
+	for k,t in pairs(_o.fields) do
+		fi[k] = {
+			securityaccessor = t.securityaccessor,
+			static = t.static,
+			classowns = t.classowns,
+			cls = weakref.new(t.cls:get())
+		}
+	end
 	return o
 end

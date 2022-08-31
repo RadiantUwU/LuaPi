@@ -16,5 +16,7 @@ do
         objinfo[env.basetype].frozen = true
         objinfo[env.object].type = env.basetype
         objinfo[env.basetype].type = env.basetype
+        objinfo[env.basetype].bases = {env.object}
+        objinfo[env.basetype].mro = {env.basetype,env.object}
     end
 end

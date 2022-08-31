@@ -14,10 +14,6 @@ else
     _isLuau = false
 end
 
-local _getfenv = getfenv
-local _setfenv = setfenv
-local curr_env = _getfenv(1)
-
 local __luapi = {}
 
 if _isLuau then
@@ -51,30 +47,29 @@ do
             cls=cls
         }
     end
-    local final = {cls_builder__type="final"}
-    local field = {}
-    table.freeze(final)
+    local final = setmetatable({},{__metatable=false,__index={cls_builder__type="final"},__newindex=function(t,k,v) error("cannot set frozen table.") end})
+    local field = setmetatable({},{__metatable=false,__newindex=function(t,k,v) error("cannot set frozen table.") end})
     local function _static(o)
         o.cls_builder__static = true
         return o
     end
     local function static(accessor)
-        return function (str:string)
+        return function (str)
             return _static(accessor(str))
         end
     end
     local function extends(...)
         local t = {}
         for _,v in ipairs(table.pack(...)) do
-            if v.cls_builder__type == "metaclass" then
+            if v.cls_builder__type == "metaclass" or v.cls_builder__type == "final" then
                 table.insert(t,v)
-                continue
+            else
+                table.insert(t,base_obj(v))
             end
-            table.insert(t,base_obj(v))
         end
-        return unpack(t)
+        return table.unpack(t)
     end
-    local dictset = function (dict:{[string]:any},pre,func,cls_name,metaclass,processed_bases,isfinal)
+    local dictset = function (dict,pre,func,cls_name,metaclass,processed_bases,isfinal)
         local newdict = {}
         for k,v in pairs(dict) do
             if type(k) == "string" then
@@ -92,55 +87,51 @@ do
             end
         end
         if #pre > 0 then
-            return func(unpack(pre),cls_name,metaclass,processed_bases,isfinal,newdict)
+            return func(table.unpack(pre),cls_name,metaclass,processed_bases,isfinal,newdict)
         else
             return func(cls_name,metaclass,processed_bases,isfinal,newdict)
         end
     end
     local function class_func_custom(func,...)
         local pre = table.pack(...)
-        local function class_builder(cls_name: string)
+        local function class_builder(cls_name)
             return function (...)
                 local bases = table.pack(...)
                 local processed_bases = {}
                 local metaclass = nil
                 local isfinal = false
                 for _,v in ipairs(bases) do
-                    if type(v) == "string" then
-                        return dictset(bases,func,cls_name,metaclass,{},isfinal)
+                    if v.cls_builder__type ~= "base" and v.cls_builder__type ~= "metaclass" and v.cls_builder__type ~= "final" then
+                        return dictset(bases[1],pre,func,cls_name,metaclass,{},isfinal)
+                    end
+                    if v.cls_builder__type == "metaclass" then
+                        metaclass = v.cls
+                    elseif v.cls_builder__type == "final" then
+                        isfinal = true
                     else
-                        if v.cls_builder__type == "public" or v.cls_builder__type == "protected" or v.cls_builder__type == "private" then
-                            return dictset(bases,func,cls_name,metaclass,{},isfinal)
-                        end
-                        if v.cls_builder__type == "metaclass" then
-                            metaclass = v.cls
-                        elseif v.cls_builder__type == "final" then
-                            isfinal = true
-                        else
-                            table.insert(processed_bases,v.cls)
-                        end
+                        table.insert(processed_bases,v.cls)
                     end
                 end
-                return function(dict:{[string]:any})
+                return function(dict)
                     return dictset(dict,pre,func,cls_name,metaclass,processed_bases,isfinal)
                 end
             end
         end
         return class_builder
     end
-    local function private(str: string)
+    local function private(str)
         return {
             cls_builder__type="private",
             str=str
         }
     end
-    local function protected(str: string)
+    local function protected(str)
         return {
             cls_builder__type="protected",
             str=str
         }
     end
-    local function public(str: string)
+    local function public(str)
         return {
             cls_builder__type="public",
             str=str
@@ -4723,12 +4714,12 @@ local function LoadstringModule()
     ]]--====================
     
     local bit = bit32 or {
-        rshift=function(a,b) return loadstring("a>>b")() end,
-        lshift=function(a,b) return loadstring("a<<b")() end,
-        band=function(a,b) return loadstring("a&b")() end,
-        bor=function(a,b) return loadstring("a|b")() end,
-        bxor=function(a,b) return loadstring("a~b")() end,
-        bnot=function(a) return loadstring("~a")() end,
+        rshift=function(a,b) return load("a>>b")() end,
+        lshift=function(a,b) return load("a<<b")() end,
+        band=function(a,b) return load("a&b")() end,
+        bor=function(a,b) return load("a|b")() end,
+        bxor=function(a,b) return load("a~b")() end,
+        bnot=function(a) return load("~a")() end,
     }
     local stm_lua_bytecode
     local wrap_lua_func
@@ -5934,7 +5925,11 @@ local function defaultreturn(v)
 end
 local function defaultreturnt(t)
 	return function(...)
-		return table.clone(t)
+		local r = {}
+		for k,v in pairs(t) do
+		r[k] = v
+		end
+		return r
 	end
 end
 
@@ -5949,7 +5944,7 @@ local function tryfunc(func,...)
 	end))
 	return table.unpack(x)
 end
-local function tryexcept(try:(any...)->any...,except:(string)->any...,...: any...): any...
+local function tryexcept(try,except,...)
 	local p = table.pack(tryfunc(try,...))
 	if not p[1] then
 		return except(p[2])
@@ -5957,7 +5952,7 @@ local function tryexcept(try:(any...)->any...,except:(string)->any...,...: any..
 	table.remove(p,1)
 	return table.unpack(p)
 end
-local function tryfinally(try:(any...)->any...,finally:(any...)->nil,...: any...): any...
+local function tryfinally(try,finally,...)
 	local p = table.pack(tryfunc(try,...))
 	finally(...)
 	if not p[1] then
@@ -5966,7 +5961,7 @@ local function tryfinally(try:(any...)->any...,finally:(any...)->nil,...: any...
 	table.remove(p,1)
 	return table.unpack(p)
 end
-local function tryexceptfinally(try:(any...)->any...,except:(string)->any...,finally:(any...)->any...,...: any...): any...
+local function tryexceptfinally(try,except,finally,...)
 	local p = table.pack(tryfunc(tryexcept,try,except,...))
 	finally(...)
 	if not p[1] then
@@ -5980,80 +5975,148 @@ end
 	./src/02metatable.lua
 ]]--====================
 
+local objinfo
 local LuaPimt = {
 	__metatable = false, --protected table
 	__add = function(t,o)
-		return objinfo[t].type.__add__(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__add__")(t,o)
 	end,
 	__sub = function(t,o)
-		return objinfo[t].type.__sub__(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__sub__")(t,o)
 	end,
 	__mul = function(t,o)
-		return objinfo[t].type.__mul__(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__mul__")(t,o)
 	end,
 	__div = function(t,o)
-		return objinfo[t].type.__div__(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__div__")(t,o)
 	end,
 	__mod = function(t,o)
-		return objinfo[t].type.__mod__(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__mod__")(t,o)
 	end,
 	__pow = function(t,o)
-		return objinfo[t].type.__pow__(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__pow__")(t,o)
 	end,
 	__unm = function(t)
-		return objinfo[t].type.__unm__(t)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__unm__")(t)
 	end,
 	__concat = function(t,o)
-		return objinfo[t].type.__concat__(t,o)
-	end,
-	__tostring = function(t)
-		return objinfo[t].type.__str__(t)
-	end,
-	__len = function(t)
-		return objinfo[t].type.__len__(t)
-	end,
-	__call = function(t,...)
-		return objinfo[t].type.__call__(t,...)
-	end,
-	__eq = function(t,o)
-		return objinfo[t].type.__eq__(t,o)
-	end,
-	__le = function	(t,o)
-		return not (objinfo[t].type.__gt__(t,o))
-	end,
-	__lt = function(t,o)
-		return objinfo[t].type.__lt__(t,o)
-	end,
-	__index = function(t,k)
-		return objinfo[t].type.__getitem__(t,k)
-	end,
-	__newindex = function(t,k,v)
-		return objinfo[t].type.__setitem__(t,k,v)
-	end,
-
-	__band = function(t,o)
-		return objinfo[t].type.__band__(t,o)
-	end,
-	__bor = function(t,o)
-		return objinfo[t].type.__bor__(t,o)
-	end,
-	__bxor = function(t,o)
-		return objinfo[t].type.__bxor__(t,o)
-	end,
-	__bnot = function(t)
-		return objinfo[t].type.__bnot__(t)
-	end,
-	__shl = function(t,o)
-		return objinfo[t].type.__shl__(t,o)
-	end,
-	__shr = function(t,o)
-		return objinfo[t].type.__shr__(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__concat__")(t,o)
 	end,
 	__idiv = function(t,o)
-		return objinfo[t].type.__idiv__(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__idiv__")(t,o)
+	end,
+	__band = function(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__band__")(t,o)
+	end,
+	__bor = function(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__bor__")(t,o)
+	end,
+	__bxor = function(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__bxor__")(t,o)
+	end,
+	__bnot = function(t)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__bnot__")(t)
+	end,
+	__lshift = function(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__shl__")(t,o)
+	end,
+	__rshift = function(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__shr__")(t,o)
+	end,
+	__tostring = function(t)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__str__")(t)
+	end,
+	__len = function(t)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__len__")(t)
+	end,
+	__tonumber = function(t)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__num__")(t)
+	end,
+	__toboolean = function(t)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__bool__")(t)
+	end,
+	__index = function(t,k)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__getitem__")(t,k)
+	end,
+	__newindex = function(t,k,v)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__setitem__")(t,k,v)
+	end,
+	__eq = function(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__eq__")(t,o)
+	end,
+	__lt = function(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__lt__")(t,o)
+	end,
+	__le = function(t,o)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return not (objinfo[object].contents.__getitem__(t,"__gt__")(t,o))
+	end,
+	__call = function(t,...)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__call__")(t,...)
 	end,
 	__gc = function(t)
-		return objinfo[t].type.__del__(t)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__gc__")(t)
+	end,
+	__pairs = function(t)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__iter__")(t)
+	end,
+	__next = function(t)
+		local object = objinfo[objinfo[t].type].mro
+		object = object[#object]
+		return objinfo[object].contents.__getitem__(t,"__next__")(t)
 	end,
 }
 
@@ -6111,7 +6174,7 @@ end
 local callsecuritydestructor -- Kill and log security violations, regardless of what is happening
 if _isLuau then
 	local up = game
-	function callsecuritydestructor(f:boolean) 
+	function callsecuritydestructor(f) 
 		if f then
 			up.TestService:Error(debug.traceback(
 				"Repeated attempts at indexing a function or field which is not authorized to do so.",
@@ -6127,7 +6190,7 @@ if _isLuau then
 		end
 	end
 else
-	function callsecuritydestructor(f:boolean) 
+	function callsecuritydestructor(f) 
 		if f then
 			warn(debug.traceback(
 				"Repeated attempts at indexing a function or field which is not authorized to do so.",
@@ -6145,7 +6208,7 @@ else
 end
 
 local accessorinfodefault = defaultreturnt({securityaccessor="public",static=false,classowns=false})
-local objinfo = setmetatable({},{__metatable=false,__mode="k"}) -- hold object info across sandbox enviroments
+objinfo = setmetatable({},{__metatable=false,__mode="k"}) -- hold object info across sandbox enviroments
 
 local function isLuaPiObject(o)
 	if objinfo[o] then
@@ -6164,12 +6227,12 @@ local function isType(o)
 end
 local function invalidfuncu(name)
 	return function (t,...)
-		error(name.." operation is not supported for object of type \""..objinfo[objinfo[t].type].__name__.."\"",2)
+		error(name.." operation is not supported for object of type \""..objinfo[objinfo[t].type].contents.__name__.."\"",2)
 	end
 end
 local function invalidfuncb(name)
 	return function(t, o,...)
-		error(name.." operation is not supported for objects of type \""..objinfo[objinfo[t].type].__name__.."\" and \""..objinfo[objinfo[o].type].__name__.."\"",2)
+		error(name.." operation is not supported for objects of type \""..objinfo[objinfo[t].type].contents.__name__.."\" and \""..objinfo[objinfo[o].type].__name__.."\"",2)
 	end
 end
 local function _table_find(t,v)
@@ -6212,6 +6275,14 @@ local function ismetatablefunc(f)
 	end
 	return false
 end
+local function _table_clone(t)
+	local r = {}
+	for k,v in pairs(t) do
+		r[k] = v
+	end
+	return r
+end
+local table_clone = table.clone or _table_clone
 local getfunc
 
 if _isLuau then
@@ -6273,10 +6344,11 @@ local function newType(env,name,metaclass,bases,final,dict)
 	local _o = objinfo[o]
 	_o.contents.__name__ = name
 	_o.bases = bases or {env.baseobject}
+	_o.contents.__bases__ = table_clone(_o.bases)
 	_o.final = final
 	_o.protectedfields = {}
 	_o.privatefields = {}
-	if not table.find(bases,env.baseobject) then
+	if not rawtable_find(bases,env.baseobject) then
 		table.insert(bases,env.baseobject)
 	end
 	_o.mro = {o}
@@ -6288,13 +6360,15 @@ local function newType(env,name,metaclass,bases,final,dict)
 			if objinfo[type].final then 
 				error("Cannot extend final class \""..objinfo[type].contents.__name__.."\"") 
 			end
-			local f = table.find(_o.mro, type)
+			local f = rawtable_find(_o.mro, type)
 			if f then
 				table.remove(_o.mro, f)
 			end
 			table.insert(_o.mro, type)
 		end
 	end
+	_o.contents.__mro__ = table_clone(_o.mro)
+	_o.contents.__fields__ = {}
 	_o.fields = setmetatable({},{__index=accessorinfodefault})
 	local t = _o.contents
 	local _t = _o.protectedfields
@@ -6303,9 +6377,9 @@ local function newType(env,name,metaclass,bases,final,dict)
 		local x
 		if type(k) == "string" then
 			x = {securityaccessor = "public",static=false,cls=weakref.new(o)}
-			_o.fields[k.str] = x
+			_o.fields[k] = x
 			if v ~= field_ty then
-				t[k.str] = v
+				t[k] = v
 				x.classowns = true
 			else
 				x.classowns = false
@@ -6314,7 +6388,7 @@ local function newType(env,name,metaclass,bases,final,dict)
 			local isstatic = false
 			x = {securityaccessor = k.cls_builder__type,static=isstatic,cls=weakref.new(o)}
 			if k.cls_builder__static then isstatic = true end
-			if k.cls_builder__type == "public" then
+			if k.cls_builder__type == "public" or table_find(force_public, k.str) then
 				_o.fields[k.str] = x
 				if v ~= field_ty then
 					t[k.str] = v
@@ -6354,7 +6428,16 @@ local function newType(env,name,metaclass,bases,final,dict)
 			end
 		end
 		return fields
-	end)(o,unpack(bases))
+	end)(o,table.unpack(bases))
+	local fi = _o.contents.__fields__
+	for k,t in pairs(_o.fields) do
+		fi[k] = {
+			securityaccessor = t.securityaccessor,
+			static = t.static,
+			classowns = t.classowns,
+			cls = weakref.new(t.cls:get())
+		}
+	end
 	return o
 end
 
@@ -6506,8 +6589,10 @@ do
                 local x = objinfo[t]
                 local acc = objinfo[x.type].fields[k]
                 local co = acc.classowns
+                local object = objinfo[t.type].mro
+                object = object[#object]
                 if acc.securityaccessor ~= "public" then
-                    local c = objinfo[object].contents.securityCheck(t,k)
+                    local c = objinfo[object].protectedfields.securityCheck(t,k)
                     if not co then
                         if acc.securityaccessor == "protected" then
                             return x.protectedcontent[k]
@@ -6516,13 +6601,31 @@ do
                         end
                     else
                         if acc.securityaccessor == "protected" then
-                            return objinfo[x.type].protectedfields[k]
+                            local x = objinfo[x.type].protectedfields[k]
+                            if type(x) == "function" and not acc.static then
+                                return function(...)
+                                    return x(t,...)
+                                end
+                            end
+                            return x
                         else
-                            return c.privatefields[k]
+                            local x = c.privatefields[k]
+                            if type(x) == "function" and not acc.static then
+                                return function(...)
+                                    return x(t,...)
+                                end
+                            end
+                            return x
                         end
                     end
                 elseif co then
-                    return objinfo[x.type].contents[k]
+                    local x = objinfo[x.type].contents[k]
+                    if type(x) == "function" and not acc.static then
+                        return function(...)
+                            return x(t,...)
+                        end
+                    end
+                    return x
                 else
                     return x.contents[k]
                 end
@@ -6531,8 +6634,10 @@ do
                 local x = objinfo[t]
                 local acc = objinfo[x.type].fields[k]
                 local co = acc.classowns
+                local object = objinfo[t.type].mro
+                object = object[#object]
                 if acc.securityaccessor ~= "public" then
-                    local c = objinfo[object].contents.securityCheck(t,k)
+                    local c = objinfo[object].protectedfields.securityCheck(t,k)
                     if not co then
                         if acc.securityaccessor == "protected" then
                             x.protectedcontent[k] = v
@@ -6702,7 +6807,7 @@ do
                     if field == "public" then
                         return _class.contents[k]
                     else
-                        local c = objinfo[object].contents.securityCheck(self,k)
+                        local c = objinfo[basetype].protectedfields.securityCheck(self,k)
                         if field == "protected" then
                             return _class.protectedcontent[k]
                         else
@@ -6710,6 +6815,9 @@ do
                         end
                     end
                 end
+            end,
+            ["__str__"] = function(self)
+                return "<class "..objinfo[self].contents.__name__..">"
             end
         }
     end
@@ -6737,6 +6845,8 @@ do
         objinfo[env.basetype].frozen = true
         objinfo[env.object].type = env.basetype
         objinfo[env.basetype].type = env.basetype
+        objinfo[env.basetype].bases = {env.object}
+        objinfo[env.basetype].mro = {env.basetype,env.object}
     end
 end
 
@@ -6752,7 +6862,10 @@ __luapi.new = function()
     local basetype
     local class = ClassBuilder.class_func_custom(function(cls_name,metaclass,processed_bases,isfinal,newdict)
         metaclass = metaclass or basetype
-        return metaclass.__new__(cls_name,metaclass,processed_bases,isfinal,newdict)
+        if metaclass then
+            return metaclass.__new__(cls_name,metaclass,processed_bases,isfinal,newdict)
+        end
+        return newType(env,cls_name,metaclass,processed_bases,isfinal,newdict)
     end)
     initenv(class,env)
     basetype = env.basetype
@@ -6800,6 +6913,9 @@ __luapi.new = function()
             else error("proxy object")
             end
         end),
+        tryexcept = functionproxy(tryexcept),
+        tryfinally = functionproxy(tryfinally),
+        tryexceptfinally = functionproxy(tryexceptfinally),
     })
     return env
 end
@@ -6808,6 +6924,7 @@ end
 	./src/_f.lua
 ]]--====================
 
+return __luapi
 end
 if _isLuau then
     return loadLuaPiModule()

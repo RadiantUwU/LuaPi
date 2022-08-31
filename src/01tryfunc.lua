@@ -5,7 +5,7 @@ local function tryfunc(func,...)
 	end))
 	return table.unpack(x)
 end
-local function tryexcept(try:(any...)->any...,except:(string)->any...,...: any...): any...
+local function tryexcept(try,except,...)
 	local p = table.pack(tryfunc(try,...))
 	if not p[1] then
 		return except(p[2])
@@ -13,7 +13,7 @@ local function tryexcept(try:(any...)->any...,except:(string)->any...,...: any..
 	table.remove(p,1)
 	return table.unpack(p)
 end
-local function tryfinally(try:(any...)->any...,finally:(any...)->nil,...: any...): any...
+local function tryfinally(try,finally,...)
 	local p = table.pack(tryfunc(try,...))
 	finally(...)
 	if not p[1] then
@@ -22,7 +22,7 @@ local function tryfinally(try:(any...)->any...,finally:(any...)->nil,...: any...
 	table.remove(p,1)
 	return table.unpack(p)
 end
-local function tryexceptfinally(try:(any...)->any...,except:(string)->any...,finally:(any...)->any...,...: any...): any...
+local function tryexceptfinally(try,except,finally,...)
 	local p = table.pack(tryfunc(tryexcept,try,except,...))
 	finally(...)
 	if not p[1] then

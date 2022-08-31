@@ -4542,12 +4542,12 @@ local function LoadstringModule()
     ]]--====================
     
     local bit = bit32 or {
-        rshift=function(a,b) return loadstring("a>>b")() end,
-        lshift=function(a,b) return loadstring("a<<b")() end,
-        band=function(a,b) return loadstring("a&b")() end,
-        bor=function(a,b) return loadstring("a|b")() end,
-        bxor=function(a,b) return loadstring("a~b")() end,
-        bnot=function(a) return loadstring("~a")() end,
+        rshift=function(a,b) return load("a>>b")() end,
+        lshift=function(a,b) return load("a<<b")() end,
+        band=function(a,b) return load("a&b")() end,
+        bor=function(a,b) return load("a|b")() end,
+        bxor=function(a,b) return load("a~b")() end,
+        bnot=function(a) return load("~a")() end,
     }
     local stm_lua_bytecode
     local wrap_lua_func

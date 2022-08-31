@@ -43,7 +43,7 @@ end
 local callsecuritydestructor -- Kill and log security violations, regardless of what is happening
 if _isLuau then
 	local up = game
-	function callsecuritydestructor(f:boolean) 
+	function callsecuritydestructor(f) 
 		if f then
 			up.TestService:Error(debug.traceback(
 				"Repeated attempts at indexing a function or field which is not authorized to do so.",
@@ -59,7 +59,7 @@ if _isLuau then
 		end
 	end
 else
-	function callsecuritydestructor(f:boolean) 
+	function callsecuritydestructor(f) 
 		if f then
 			warn(debug.traceback(
 				"Repeated attempts at indexing a function or field which is not authorized to do so.",
@@ -77,7 +77,7 @@ else
 end
 
 local accessorinfodefault = defaultreturnt({securityaccessor="public",static=false,classowns=false})
-local objinfo = setmetatable({},{__metatable=false,__mode="k"}) -- hold object info across sandbox enviroments
+objinfo = setmetatable({},{__metatable=false,__mode="k"}) -- hold object info across sandbox enviroments
 
 local function isLuaPiObject(o)
 	if objinfo[o] then
@@ -96,12 +96,12 @@ local function isType(o)
 end
 local function invalidfuncu(name)
 	return function (t,...)
-		error(name.." operation is not supported for object of type \""..objinfo[objinfo[t].type].__name__.."\"",2)
+		error(name.." operation is not supported for object of type \""..objinfo[objinfo[t].type].contents.__name__.."\"",2)
 	end
 end
 local function invalidfuncb(name)
 	return function(t, o,...)
-		error(name.." operation is not supported for objects of type \""..objinfo[objinfo[t].type].__name__.."\" and \""..objinfo[objinfo[o].type].__name__.."\"",2)
+		error(name.." operation is not supported for objects of type \""..objinfo[objinfo[t].type].contents.__name__.."\" and \""..objinfo[objinfo[o].type].__name__.."\"",2)
 	end
 end
 local function _table_find(t,v)
@@ -144,6 +144,14 @@ local function ismetatablefunc(f)
 	end
 	return false
 end
+local function _table_clone(t)
+	local r = {}
+	for k,v in pairs(t) do
+		r[k] = v
+	end
+	return r
+end
+local table_clone = table.clone or _table_clone
 local getfunc
 
 if _isLuau then

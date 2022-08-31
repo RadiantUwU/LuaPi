@@ -5,6 +5,10 @@ local function defaultreturn(v)
 end
 local function defaultreturnt(t)
 	return function(...)
-		return table.clone(t)
+		local r = {}
+		for k,v in pairs(t) do
+		r[k] = v
+		end
+		return r
 	end
 end

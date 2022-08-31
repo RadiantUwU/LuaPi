@@ -6,7 +6,10 @@ __luapi.new = function()
     local basetype
     local class = ClassBuilder.class_func_custom(function(cls_name,metaclass,processed_bases,isfinal,newdict)
         metaclass = metaclass or basetype
-        return metaclass.__new__(cls_name,metaclass,processed_bases,isfinal,newdict)
+        if metaclass then
+            return metaclass.__new__(cls_name,metaclass,processed_bases,isfinal,newdict)
+        end
+        return newType(env,cls_name,metaclass,processed_bases,isfinal,newdict)
     end)
     initenv(class,env)
     basetype = env.basetype
@@ -54,6 +57,9 @@ __luapi.new = function()
             else error("proxy object")
             end
         end),
+        tryexcept = functionproxy(tryexcept),
+        tryfinally = functionproxy(tryfinally),
+        tryexceptfinally = functionproxy(tryexceptfinally),
     })
     return env
 end

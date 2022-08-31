@@ -142,8 +142,10 @@ do
                 local x = objinfo[t]
                 local acc = objinfo[x.type].fields[k]
                 local co = acc.classowns
+                local object = objinfo[t.type].mro
+                object = object[#object]
                 if acc.securityaccessor ~= "public" then
-                    local c = objinfo[object].contents.securityCheck(t,k)
+                    local c = objinfo[object].protectedfields.securityCheck(t,k)
                     if not co then
                         if acc.securityaccessor == "protected" then
                             return x.protectedcontent[k]
@@ -152,13 +154,31 @@ do
                         end
                     else
                         if acc.securityaccessor == "protected" then
-                            return objinfo[x.type].protectedfields[k]
+                            local x = objinfo[x.type].protectedfields[k]
+                            if type(x) == "function" and not acc.static then
+                                return function(...)
+                                    return x(t,...)
+                                end
+                            end
+                            return x
                         else
-                            return c.privatefields[k]
+                            local x = c.privatefields[k]
+                            if type(x) == "function" and not acc.static then
+                                return function(...)
+                                    return x(t,...)
+                                end
+                            end
+                            return x
                         end
                     end
                 elseif co then
-                    return objinfo[x.type].contents[k]
+                    local x = objinfo[x.type].contents[k]
+                    if type(x) == "function" and not acc.static then
+                        return function(...)
+                            return x(t,...)
+                        end
+                    end
+                    return x
                 else
                     return x.contents[k]
                 end
@@ -167,8 +187,10 @@ do
                 local x = objinfo[t]
                 local acc = objinfo[x.type].fields[k]
                 local co = acc.classowns
+                local object = objinfo[t.type].mro
+                object = object[#object]
                 if acc.securityaccessor ~= "public" then
-                    local c = objinfo[object].contents.securityCheck(t,k)
+                    local c = objinfo[object].protectedfields.securityCheck(t,k)
                     if not co then
                         if acc.securityaccessor == "protected" then
                             x.protectedcontent[k] = v

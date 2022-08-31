@@ -130,7 +130,7 @@ do
                     if field == "public" then
                         return _class.contents[k]
                     else
-                        local c = objinfo[object].contents.securityCheck(self,k)
+                        local c = objinfo[basetype].protectedfields.securityCheck(self,k)
                         if field == "protected" then
                             return _class.protectedcontent[k]
                         else
@@ -138,6 +138,9 @@ do
                         end
                     end
                 end
+            end,
+            ["__str__"] = function(self)
+                return "<class "..objinfo[self].contents.__name__..">"
             end
         }
     end
