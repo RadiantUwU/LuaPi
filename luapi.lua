@@ -5981,142 +5981,142 @@ local LuaPimt = {
 	__add = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__add__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__add__")(o)
 	end,
 	__sub = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__sub__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__sub__")(o)
 	end,
 	__mul = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__mul__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__mul__")(o)
 	end,
 	__div = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__div__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__div__")(o)
 	end,
 	__mod = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__mod__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__mod__")(o)
 	end,
 	__pow = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__pow__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__pow__")(o)
 	end,
 	__unm = function(t)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__unm__")(t)
+		return objinfo[object].contents.__getitem__(t,"__unm__")()
 	end,
 	__concat = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__concat__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__concat__")(o)
 	end,
 	__idiv = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__idiv__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__idiv__")(o)
 	end,
 	__band = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__band__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__band__")(o)
 	end,
 	__bor = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__bor__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__bor__")(o)
 	end,
 	__bxor = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__bxor__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__bxor__")(o)
 	end,
 	__bnot = function(t)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__bnot__")(t)
+		return objinfo[object].contents.__getitem__(t,"__bnot__")()
 	end,
 	__lshift = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__shl__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__shl__")(o)
 	end,
 	__rshift = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__shr__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__shr__")(o)
 	end,
 	__tostring = function(t)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__str__")(t)
+		return objinfo[object].contents.__getitem__(t,"__str__")()
 	end,
 	__len = function(t)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__len__")(t)
+		return objinfo[object].contents.__getitem__(t,"__len__")()
 	end,
 	__tonumber = function(t)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__num__")(t)
+		return objinfo[object].contents.__getitem__(t,"__num__")()
 	end,
 	__toboolean = function(t)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__bool__")(t)
+		return objinfo[object].contents.__getitem__(t,"__bool__")()
 	end,
 	__index = function(t,k)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__getitem__")(t,k)
+		return objinfo[object].contents.__getitem__(t,"__getitem__")(k)
 	end,
 	__newindex = function(t,k,v)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__setitem__")(t,k,v)
+		return objinfo[object].contents.__getitem__(t,"__setitem__")(k,v)
 	end,
 	__eq = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__eq__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__eq__")(o)
 	end,
 	__lt = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__lt__")(t,o)
+		return objinfo[object].contents.__getitem__(t,"__lt__")(o)
 	end,
 	__le = function(t,o)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return not (objinfo[object].contents.__getitem__(t,"__gt__")(t,o))
+		return not (objinfo[object].contents.__getitem__(t,"__gt__")(o))
 	end,
 	__call = function(t,...)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__call__")(t,...)
+		return objinfo[object].contents.__getitem__(t,"__call__")(...)
 	end,
 	__gc = function(t)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__gc__")(t)
+		return objinfo[object].contents.__getitem__(t,"__del__")()
 	end,
 	__pairs = function(t)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__iter__")(t)
+		return objinfo[object].contents.__getitem__(t,"__iter__")()
 	end,
 	__next = function(t)
 		local object = objinfo[objinfo[t].type].mro
 		object = object[#object]
-		return objinfo[object].contents.__getitem__(t,"__next__")(t)
+		return objinfo[object].contents.__getitem__(t,"__next__")()
 	end,
 }
 
@@ -6329,7 +6329,7 @@ local function newObject()
 		authf = nil,
 		unlockprivate = false,
 		authorized = setmetatable({},{__metatable=false,__mode="kv"}), 
-		notauthorized = setmetatable({},{__metatable=false,__mode="kv"})
+		notauthorized = setmetatable({},{__metatable=false,__mode="k"})
 	}
 	return o
 end
@@ -6388,7 +6388,14 @@ local function newType(env,name,metaclass,bases,final,dict)
 			local isstatic = false
 			x = {securityaccessor = k.cls_builder__type,static=isstatic,cls=weakref.new(o)}
 			if k.cls_builder__static then isstatic = true end
-			if k.cls_builder__type == "public" or table_find(force_public, k.str) then
+			if table_find(force_public, k.str) then
+				if v ~= field_ty then
+					t[k.str] = v
+					_o.fields[k.str] = x
+					x.securityaccessor = "public"
+					x.classowns = true
+				end
+			elseif k.cls_builder__type == "public" then
 				_o.fields[k.str] = x
 				if v ~= field_ty then
 					t[k.str] = v
@@ -6571,7 +6578,7 @@ do
             [public "__mod__"] = invalidfuncb("modulo"),
             [public "__pow__"] = invalidfuncb("power"),
             [public "__str__"] = function(t)
-                return "<LuaO object of type \""..objinfo[objinfo[t].type].__name__.."\">"
+                return "<LuaPi object of type \""..tostring(objinfo[objinfo[t].type].contents.__name__).."\">"
             end,
             [public "__num__"] = invalidfuncu("tonumber"),
             [public "__bool__"] = function(t)
@@ -6589,7 +6596,7 @@ do
                 local x = objinfo[t]
                 local acc = objinfo[x.type].fields[k]
                 local co = acc.classowns
-                local object = objinfo[t.type].mro
+                local object = objinfo[x.type].mro
                 object = object[#object]
                 if acc.securityaccessor ~= "public" then
                     local c = objinfo[object].protectedfields.securityCheck(t,k)
@@ -6701,10 +6708,11 @@ do
                 return newType(env,t[1],cls,t[2],t[3],t[4])
             end,
             ["__call__"] = function(self,...)
-                local o = self.__new__(...)
-                local m = objinfo[self].type.__mro__
+                local fields = objinfo[self].fields
+                local o = objinfo[fields["__new__"].cls:get()].contents.__new__(self,...)
+                local m = objinfo[self].mro
                 if rawtable_find(m,objinfo[o].type) then
-                    local x = self.__init__(o,...)
+                    local x = objinfo[fields["__init__"].cls:get()].contents.__init__(o,...)
                     if x ~= nil then
                         return o
                     end
@@ -6814,10 +6822,12 @@ do
                             return _class.privatecontent[c][k]
                         end
                     end
+                else
+                    return objinfo[self].contents[k]
                 end
             end,
             ["__str__"] = function(self)
-                return "<class "..objinfo[self].contents.__name__..">"
+                return "<class \""..tostring(objinfo[self].contents.__name__).."\">"
             end
         }
     end
@@ -6847,6 +6857,16 @@ do
         objinfo[env.basetype].type = env.basetype
         objinfo[env.basetype].bases = {env.object}
         objinfo[env.basetype].mro = {env.basetype,env.object}
+        objinfo[env.basetype].fields = (function(...) 
+            local fieldst = reverse_table(table.pack(...))
+            local fields = {}
+            for _,cls in ipairs(fieldst) do 
+                for k,v in pairs(objinfo[cls].fields) do
+                    fields[k] = v
+                end
+            end
+            return fields
+        end)(env.basetype,env.object)
     end
 end
 
@@ -6919,13 +6939,788 @@ __luapi.new = function()
     })
     return env
 end
+return __luapi
+end
+
+
+--[[====================
+	./src/80debugger.lua
+]]--====================
+
+--[[====================
+	./src/_h.lua
+]]--====================
+
+do
+
+--[[====================
+	./src/00debugger.lua
+]]--====================
+
+debugger = {}
+local debugger_mt = { __newindex = function(t,k,v) error("attempt to modify read-only table") end}
+_G.debugger = debugger
+debugger.lastenv = {}
+
+--[[====================
+	./src/00enumproxy.lua
+]]--====================
+
+local enumids = setmetatable({},{__mode = "k", __metatable = false})
+local enumproxymt = {
+    __metatable = false,
+    __index = function(t,k)
+        error("cannot index userdata")
+    end,
+    __newindex = function(t,k,v)
+        error("cannot assign to userdata")
+    end,
+    __pairs = function(t)
+        error("cannot iterate userdata")
+    end,
+    __ipairs = function(t)
+        error("cannot iterate userdata")
+    end,
+    __len = function(t)
+        error("cannot get length of userdata")
+    end,
+    __tostring = function(t)
+        return "userdata: "..enumids[t]
+    end,
+    __concat = function(t,s)
+        return tostring(t)..s
+    end,
+    __call = function(t,...)
+        return error("cannot call userdata")
+    end,
+    __unm = function(t)
+        return error("cannot negate userdata")
+    end,
+    __add = function(t,s)
+        return error("cannot add userdata")
+    end,
+    __sub = function(t,s)
+        return error("cannot subtract userdata")
+    end,
+    __mul = function(t,s)
+        return error("cannot multiply userdata")
+    end,
+    __div = function(t,s)
+        return error("cannot divide userdata")
+    end,
+    __mod = function(t,s)
+        return error("cannot modulo userdata")
+    end,
+    __pow = function(t,s)
+        return error("cannot power userdata")
+    end,
+    __band = function(t,s)
+        return error("cannot bitwise and userdata")
+    end,
+    __bor = function(t,s)
+        return error("cannot bitwise or userdata")
+    end,
+    __bxor = function(t,s)
+        return error("cannot bitwise xor userdata")
+    end,
+    __bnot = function(t)
+        return error("cannot bitwise not userdata")
+    end,
+    __shl = function(t,s)
+        return error("cannot bitwise shift left userdata")
+    end,
+    __shr = function(t,s)
+        return error("cannot bitwise shift right userdata")
+    end,
+    __idiv = function(t,s)
+        return error("cannot integer divide userdata")
+    end,
+}
+local function newenumproxy()
+    local t = {}
+    enumids[t] = string.sub(tostring(t),8)
+    setmetatable(t,enumproxymt)
+    return t
+end
+
+--[[====================
+	./src/00getline.lua
+]]--====================
+
+local function getline()
+    return io.read("l")
+end
+
+--[[====================
+	./src/00null.lua
+]]--====================
+
+local null = setmetatable({},{__index = function(self,k)
+    error("cannot index nil")
+end, __newindex = function(self,k,v) error("cannot edit read-only table.") end,__metatable = false,})
+
+--[[====================
+	./src/00proxies.lua
+]]--====================
+
+local proxies = setmetatable({},{__mode="k"})
+
+local addproxy = function(o) --[[
+    Proxies are used to not allow running `raw` operations.
+]]--
+    proxies[o] = true
+end
+local isproxy = function(o) --[[
+    Returns true if the object is a proxy.
+]]--
+    return proxies[o]
+end
+
+--[[====================
+	./src/00strsplit.lua
+]]--====================
+
+local function string_split (str,substr)
+    local t = {}
+    while true do
+        local f,e = string.find(str,substr)
+        if not f then
+            if str ~= "" then
+                table.insert(t,str)
+            end
+            break
+        end
+        table.insert(t,string.sub(str,1,f-2))
+        str = string.sub(str,e+1)
+    end
+    return t
+end
+
+--[[====================
+	./src/00termicolor.lua
+]]--====================
+
+local terminalcolors = {
+    reset = "\033[0m",
+    bold = "\033[1m",
+    dim = "\033[2m",
+    underline = "\033[4m",
+    blink = "\033[5m",
+    reverse = "\033[7m",
+    hidden = "\033[8m",
+    strike = "\033[9m",
+    bold_off = "\033[22m",
+    dim_off = "\033[22m",
+    underline_off = "\033[24m",
+    blink_off = "\033[25m",
+    reverse_off = "\033[27m",
+    hidden_off = "\033[28m",
+    strike_off = "\033[29m",
+    default_fg = "\033[39m",
+
+    black = "\033[30m",
+    dark_red = "\033[31m",
+    dark_green = "\033[32m",
+    dark_yellow = "\033[33m",
+    dark_blue = "\033[34m",
+    dark_magenta = "\033[35m",
+    dark_cyan = "\033[36m",
+    gray = "\033[37m",
+    dark_gray = "\033[90m",
+    red = "\033[91m",
+    green = "\033[92m",
+    yellow = "\033[93m",
+    blue = "\033[94m",
+    magenta = "\033[95m",
+    cyan = "\033[96m",
+    white = "\033[97m",
+    light_gray = "\033[37m",
+
+    black_bg = "\033[40m",
+    dark_red_bg = "\033[41m",
+    dark_green_bg = "\033[42m",
+    dark_yellow_bg = "\033[43m",
+    dark_blue_bg = "\033[44m",
+    dark_magenta_bg = "\033[45m",
+    dark_cyan_bg = "\033[46m",
+    gray_bg = "\033[47m",
+    dark_gray_bg = "\033[100m",
+    red_bg = "\033[101m",
+    green_bg = "\033[102m",
+    yellow_bg = "\033[103m",
+    blue_bg = "\033[104m",
+    magenta_bg = "\033[105m",
+    cyan_bg = "\033[106m",
+    white_bg = "\033[107m",
+    light_gray_bg = "\033[47m",
+
+    default_bg = "\033[49m",
+
+    rgb = function(r,g,b,isbg)
+        local prefix = isbg and "\033[48;2;" or "\033[38;2;"
+        return prefix .. r .. ";" .. g .. ";" .. b .. "m"
+    end,
+    
+}
+
+--[[====================
+	./src/00upvalue.lua
+]]--====================
+
+local function getupvalue_id(fn, search_name)
+    local idx = 1
+    while true do
+        local name, val = debug.getupvalue(fn, idx)
+        if not name then break end
+        if name == search_name then
+            return idx, val
+        end
+        idx = idx + 1
+    end
+end
+local function getupvalues(fn)
+    local upvalues = {}
+    local idx = 1
+    while true do
+        local name, val = debug.getupvalue(fn, idx)
+        if not name then break end
+        upvalues[name] = val
+        idx = idx + 1
+    end
+    return upvalues
+end
+local function getupvalue(fn, search_name)
+    local idx, val = getupvalue_id(fn, search_name)
+    return val
+end
+local function setupvalue(fn, search_name, new_val)
+    local idx, val = getupvalue_id(fn, search_name)
+    if idx then
+        debug.setupvalue(fn, idx, new_val)
+        return true
+    end
+    return false
+end
+
+--[[====================
+	./src/00weakref.lua
+]]--====================
+
+local _weakref = setmetatable({},{__mode="v",__metatable=false})
+local _weakref_funcs = {
+    get=function(self)
+        return _weakref[self]
+    end,
+    set=function(self,value)
+        _weakref[self] = value
+    end,
+}
+local _weakref_mt = {__metatable=false,__newindex=function(t,k,v)
+    error()
+end,__index=_weakref_funcs}
+local weakref = setmetatable({},{__metatable=false,__index={
+    new = function(o)
+        local r = setmetatable({},_weakref_mt)
+        _weakref[r] = o
+        return r
+    end
+},__newindex=function(t,k,v)
+    error()
+end})
+
+--[[====================
+	./src/01fenv.lua
+]]--====================
+
+local function setfenv(fn, env)
+    if type(fn) ~= "function" then
+        fn = debug.getinfo(fn + 1, "f").func
+    end
+    local i = getupvalue_id(fn, "_ENV")
+    if i then
+        debug.upvaluejoin(fn, i, (function()
+            return env
+        end), 1)
+    end
+    return fn
+end
+local function getfenv(fn)
+    if type(fn) ~= "function" then
+        fn = debug.getinfo(fn + 1, "f").func
+    end
+    local i,v = getupvalue_id(fn, "_ENV")
+    if i then
+        return v
+    end
+end
+
+--[[====================
+	./src/01locals.lua
+]]--====================
+
+local function getlocals(thr,stack)
+    local locals = {}
+    local i = 1
+    if not stack then
+        stack = thr
+    end
+    while true do
+        local name, val = debug.getlocal(stack + 1, i)
+        if not name then break end
+        locals[name] = {
+            val = val,
+            idx = i
+        }
+        i = i + 1
+    end
+    return locals
+end
+local function getlocalsV(thr, stack)
+    local t = getlocals(thr, stack)
+    local tv = {}
+    for k,v in pairs(t) do
+        tv[k] = v.val
+    end
+    return tv
+end
+
+--[[====================
+	./src/03macros.lua
+]]--====================
+
+local function _table_find(t,v)
+	for k,v2 in pairs(t) do
+		if v2 == v then
+			return k
+		end
+	end
+	return nil
+end
+local function rawtable_find(t,v)
+	for k,v2 in pairs(t) do
+		if rawequal(v2,v) then
+			return k
+		end
+	end
+	return nil
+end
+local function base_table(...) 
+	local t = {}
+	for _,tv in ipairs(table.pack(...)) do
+		for k,v in pairs(tv) do
+			t[k] = v
+		end
+	end
+	return t
+end
+local function reverse_table(t)
+	local r = {}
+	local l = #t
+	for i = l,1,-1 do
+		r[l-i+1] = t[i]
+	end
+	return r
+end
+local table_find = _table_find
+local function getfunc(level)
+	return debug.getinfo(level + 1,"f").func
+end
+local function functionproxy(func)
+	return function(...)
+		return func(...)
+	end
+end
+local function repr_table(tbl)
+	local r = {}
+	for k,v in pairs(tbl) do
+		r[#r+1] = "["..tostring(k).."]".."="..tostring(v)
+	end
+	return "{"..table.concat(r,",").."}"
+end
+debugger.print_table = function(t) print(repr_table(t)) end
+debugger.getfunc = getfunc
+
+--[[====================
+	./src/10breakpoints.lua
+]]--====================
+
+debugger.breakpoints = {}
+function debugger.addBP(line)
+    if not table_find(debugger.breakpoints,line) then
+        table.insert(debugger.breakpoints,line)
+    end
+end
+function debugger.removeBP(line)
+    local i = table_find(debugger.breakpoints,line)
+    if i then
+        table.remove(debugger.breakpoints,i)
+    end
+end
+
+--[[====================
+	./src/10currentfunc.lua
+]]--====================
+
+debugger.currfunc = null
+
+--[[====================
+	./src/10debuggerinsts.lua
+]]--====================
+
+debugger.insts = {
+    inst_NULL = null,
+    inst_STEPINTO = newenumproxy(),
+    inst_STEPNEXT = newenumproxy(),
+    inst_STEPOUT = newenumproxy(),
+    inst_RESUME = newenumproxy(),
+    inst_WATCH = newenumproxy(),
+    inst_BRK = newenumproxy(),
+    inst_INTERACTIVE = newenumproxy()
+}
+local insts_debug = {
+    si = debugger.insts.inst_STEPINTO,
+    sn = debugger.insts.inst_STEPNEXT,
+    so = debugger.insts.inst_STEPOUT,
+    r = debugger.insts.inst_RESUME,
+    w = debugger.insts.inst_WATCH,
+    b = debugger.insts.inst_BRK,
+    i = debugger.insts.inst_INTERACTIVE
+}
+local function str_to_inst(str)
+    return insts_debug[string.lower(str)]
+end
+debugger.currinst = debugger.insts.inst_NULL
+
+--[[====================
+	./src/10debuggerrunlevel.lua
+]]--====================
+
+debugger.runLevelEnum = {
+    RUNLEVEL_NULL = null,
+    RUNLEVEL_CRITICAL = newenumproxy(),
+}
+debugger.runLevel = null
+debugger.logfile = {
+    file = "",
+    write = function (self,...)
+        local f = io.open(self.file,"a")
+        if f then
+            local t = {...}
+            for i=1,#t do
+                if type(t[i]) ~= "string" then
+                    t[i] = tostring(t[i])
+                end
+            end
+            f:write(table.concat(t,"\t"))
+            f:close()
+        end
+    end,
+    
+}
+debugger.srcfile = nil
+debugger.srcfilecontents = nil
+
+--[[====================
+	./src/10debuggerstats.lua
+]]--====================
+
+debugger.statusEnum = {
+    STATUS_NULL = null,
+    STATUS_STEPIN = newenumproxy(),
+    STATUS_STEPNEXT = newenumproxy(),
+    STATUS_STEPOUT = newenumproxy(),
+}
+debugger.status = null
+debugger.status_stack = 0
+
+--[[====================
+	./src/10debuggerwatch.lua
+]]--====================
+
+debugger.watchlist = {}
+function debugger.addwatch(expr)
+    if not table_find(debugger.watchlist,expr) then
+        table.insert(debugger.watchlist,expr)
+    end
+end
+function debugger.removewatch(expr)
+    local i = table_find(debugger.watchlist,expr)
+    if i then
+        table.remove(debugger.watchlist,i)
+    end
+end
+
+--[[====================
+	./src/12exec.lua
+]]--====================
+
+local function executeinteractive(env)
+    env = env or base_table(_G,_ENV)
+    while true do
+        io.write("> ")
+        local line = io.read("l")
+        if not line then
+            break
+        end
+        if line == "cont" then
+            break
+        end
+        local e,m = pcall(function()
+            local f,e = load(line,"=(interactive)","t",env)
+            if f then
+                f()
+            else
+                print(e)
+            end
+        end)
+        if not e then
+            print(m)
+        end
+    end
+end
+
+--[[====================
+	./src/15hook.lua
+]]--====================
+
+local function debugposinfo(event,info)
+    print(event,info.short_src.."@"..tostring(info.currentline),info.name)
+end
+local debug_thingy = "--------------------\n"
+local function debuginfo(event,info,file,f)
+    f:write(
+        debug_thingy,
+        event,
+        "\n> "..(file[info.currentline] or "nil"),
+        debug.traceback("",3),
+        "\n")
+end
+local function print_inst(inst,info)
+    print("\""..inst.."\"",info)
+end
+local debugeventswitch = {
+    ["call"] = function()
+        debugger.status_stack = debugger.status_stack + 1
+    end,
+    ["return"] = function()
+        debugger.status_stack = debugger.status_stack - 1
+    end,
+    ["tail call"] = function () end,
+    ["line"] = function() end,
+    ["count"] = function() end
+}
+local debuginstructionswitch = {
+    [debugger.insts.inst_STEPINTO] = function(info)
+        debugger.status_stack = -1
+        debugger.status = debugger.statusEnum.STATUS_STEPIN
+        return false
+    end,
+    [debugger.insts.inst_STEPNEXT] = function(info)
+        debugger.status = debugger.statusEnum.STATUS_STEPNEXT
+        return false
+    end,
+    [debugger.insts.inst_STEPOUT] = function(info)
+        debugger.status_stack = 1
+        debugger.status = debugger.statusEnum.STATUS_STEPOUT
+        return false
+    end,
+    [debugger.insts.inst_RESUME] = function(info)
+        debugger.status = debugger.statusEnum.STATUS_NULL
+        return false
+    end,
+    [debugger.insts.inst_WATCH] = function(info)
+        print_inst("a","add watch")
+        print_inst("r","remove watch")
+        print_inst("l","list watch")
+        print_inst("b","back")
+        local i = ({
+            ["a"] = function()
+                return function(expr)
+                    debugger.addwatch(expr)
+                end
+            end,
+            ["r"] = function()
+                return function(expr)
+                    debugger.removewatch(expr)
+                end
+            end,
+            ["l"] = function()
+                local locals = getlocals(4)
+                debugger.print_table(locals)
+                local env = base_table(_G,getfenv(info.func),locals)
+                for i,v in ipairs(debugger.watchlist) do
+                    local e,m = pcall(function()
+                        io.write(v..":")
+                        load("print("..v..")","=(watchlist)","t",env)()
+                    end)
+                    if not e then
+                        print(v..":","<error-type> "..m)
+                    end
+                end
+            end,
+            ["b"] = function() end
+        })[string.lower(io.read("l"))]
+        if i then
+            local f = i()
+            if f then f(io.read("l")) end
+            return true
+        else
+            print("invalid instruction")
+            return true
+        end
+    end,
+    [debugger.insts.inst_BRK] = function(info)
+        print_inst("a","add breakpoint")
+        print_inst("r","remove breakpoint")
+        print_inst("l","list breakpoints")
+        print_inst("b","back")
+        local i = ({
+            ["a"] = function()
+                return function(line)
+                    debugger.addBP(line)
+                end
+            end,
+            ["r"] = function()
+                return function(line)
+                    debugger.removeBP(line)
+                end
+            end,
+            ["l"] = function()
+                for _,v in ipairs(debugger.breakpoints) do
+                    print(v)
+                end
+            end,
+            ["b"] = function() end
+        })[string.lower(io.read("l"))]
+        if i then
+            local f = i()
+            if f then f(io.read("l")) end
+            return true
+        else
+            print("invalid instruction")
+            return true
+        end
+    end,
+    [debugger.insts.inst_INTERACTIVE] = function(info)
+        local locals = getlocals(3)
+        debugger.print_table(locals)
+        local env = base_table(_G,getfenv(info.func),locals)
+        executeinteractive(env)
+        return true
+    end,
+}
+local function debug_hook(event,line)
+    local info
+    if debugger.runLevel == debugger.runLevelEnum.RUNLEVEL_CRITICAL then
+        info = debug.getinfo(2,"Slnf")
+        if not debugger.srcfilecontents then
+            local f = io.open(debugger.srcfile,"r")
+            if not f then
+                print("error: cannot open source file")
+                return
+            end
+            debugger.srcfilecontents = string_split(f:read("a"),"\n")
+            f:close()
+        end
+        debuginfo(event,info,debugger.srcfilecontents,debugger.logfile)
+    end
+    if debugger.status ~= null then
+        info = info or debug.getinfo(2,"S")
+        if info.what == "C" then -- ignore C calls
+            return
+        end
+        debugeventswitch[event]()
+        if     (debugger.status_stack < 1 and debugger.status == debugger.statusEnum.STATUS_STEPNEXT) 
+            or (debugger.status_stack < 0 and debugger.status == debugger.statusEnum.STATUS_STEPOUT)
+            or (debugger.status == debugger.statusEnum.STATUS_STEPIN)
+        then
+            debugger.status = null
+            info = info or debug.getinfo(2,"Slnf")
+        else
+            return
+        end
+    end
+    if rawtable_find(debugger.breakpoints,line) and event == "line" then
+        info = info or debug.getinfo(2,"Slnf")
+        print("Breakpoint.")
+    elseif debugger.status == null then
+        return
+    end
+    debugposinfo(event,info)
+    print("Full instruction list:")
+    print_inst("si","Step into")
+    print_inst("sn","Step next")
+    print_inst("so","Step out")
+    print_inst("r","Resume")
+    print_inst("w","Watch")
+    print_inst("b","Breakpoints")
+    print_inst("i","Enter interactive shell.")
+    debugger.status_stack = 0
+    debugger.currfunc = info.func
+    while true do 
+        while true do
+            debugger.currinst = str_to_inst(io.read("l"))
+            if not debugger.currinst then
+                print("Invalid instruction.")
+            else
+                break
+            end
+        end
+        if not debuginstructionswitch[debugger.currinst](info) then
+            return
+        end
+    end
+end
+
+--[[====================
+	./src/20debugger_facilities.lua
+]]--====================
+
+debugger.getfenv = getfenv
+debugger.setfenv = setfenv
+debugger.getupvalue = getupvalue
+debugger.setupvalue = setupvalue
+debugger.getlocals = getlocals
+debugger.getlocalsV = getlocalsV
+debugger.getupvalue_id = getupvalue_id
+
+--[[====================
+	./src/30attach.lua
+]]--====================
+
+function debugger.attach()
+    debug.sethook(debug_hook, "lcr")
+end
+function debugger.detach()
+    debug.sethook()
+end
 
 --[[====================
 	./src/_f.lua
 ]]--====================
 
-return __luapi
 end
+
+--[[====================
+	./src/99test.lua
+]]--====================
+
+function test(e)
+    print(e.object)
+    print(e.basetype)
+    print(e.object())
+end
+debugger.runLevel = debugger.runLevelEnum.RUNLEVEL_CRITICAL
+debugger.srcfile = "luapi.lua"
+debugger.logfile.file = "dump.log"
+e = loadLuaPiModule().new()
+debugger.attach()
+test(e)
+
+--[[====================
+	./src/_f.lua
+]]--====================
+
 if _isLuau then
     return loadLuaPiModule()
 end

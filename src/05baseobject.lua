@@ -124,7 +124,7 @@ do
             [public "__mod__"] = invalidfuncb("modulo"),
             [public "__pow__"] = invalidfuncb("power"),
             [public "__str__"] = function(t)
-                return "<LuaO object of type \""..objinfo[objinfo[t].type].__name__.."\">"
+                return "<LuaPi object of type \""..tostring(objinfo[objinfo[t].type].contents.__name__).."\">"
             end,
             [public "__num__"] = invalidfuncu("tonumber"),
             [public "__bool__"] = function(t)
@@ -142,7 +142,7 @@ do
                 local x = objinfo[t]
                 local acc = objinfo[x.type].fields[k]
                 local co = acc.classowns
-                local object = objinfo[t.type].mro
+                local object = objinfo[x.type].mro
                 object = object[#object]
                 if acc.securityaccessor ~= "public" then
                     local c = objinfo[object].protectedfields.securityCheck(t,k)

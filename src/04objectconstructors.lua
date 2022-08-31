@@ -22,7 +22,7 @@ local function newObject()
 		authf = nil,
 		unlockprivate = false,
 		authorized = setmetatable({},{__metatable=false,__mode="kv"}), 
-		notauthorized = setmetatable({},{__metatable=false,__mode="kv"})
+		notauthorized = setmetatable({},{__metatable=false,__mode="k"})
 	}
 	return o
 end
@@ -81,7 +81,14 @@ local function newType(env,name,metaclass,bases,final,dict)
 			local isstatic = false
 			x = {securityaccessor = k.cls_builder__type,static=isstatic,cls=weakref.new(o)}
 			if k.cls_builder__static then isstatic = true end
-			if k.cls_builder__type == "public" or table_find(force_public, k.str) then
+			if table_find(force_public, k.str) then
+				if v ~= field_ty then
+					t[k.str] = v
+					_o.fields[k.str] = x
+					x.securityaccessor = "public"
+					x.classowns = true
+				end
+			elseif k.cls_builder__type == "public" then
 				_o.fields[k.str] = x
 				if v ~= field_ty then
 					t[k.str] = v

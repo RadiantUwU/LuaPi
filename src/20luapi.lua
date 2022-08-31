@@ -63,3 +63,5 @@ __luapi.new = function()
     })
     return env
 end
+return __luapi
+end

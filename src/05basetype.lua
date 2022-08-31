@@ -24,10 +24,11 @@ do
                 return newType(env,t[1],cls,t[2],t[3],t[4])
             end,
             ["__call__"] = function(self,...)
-                local o = self.__new__(...)
-                local m = objinfo[self].type.__mro__
+                local fields = objinfo[self].fields
+                local o = objinfo[fields["__new__"].cls:get()].contents.__new__(self,...)
+                local m = objinfo[self].mro
                 if rawtable_find(m,objinfo[o].type) then
-                    local x = self.__init__(o,...)
+                    local x = objinfo[fields["__init__"].cls:get()].contents.__init__(o,...)
                     if x ~= nil then
                         return o
                     end
@@ -137,10 +138,12 @@ do
                             return _class.privatecontent[c][k]
                         end
                     end
+                else
+                    return objinfo[self].contents[k]
                 end
             end,
             ["__str__"] = function(self)
-                return "<class "..objinfo[self].contents.__name__..">"
+                return "<class \""..tostring(objinfo[self].contents.__name__).."\">"
             end
         }
     end
