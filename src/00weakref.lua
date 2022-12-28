@@ -1,4 +1,4 @@
-local _weakref = setmetatable({},{__mode="v",__metatable=false})
+local _weakref = setmetatable({},{__mode="kv",__metatable=false})
 local _weakref_funcs = {
     get=function(self)
         return _weakref[self]

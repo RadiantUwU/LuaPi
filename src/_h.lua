@@ -1,4 +1,3 @@
-local _newtable
 local _isLuau
 if game then
     if script then

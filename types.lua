@@ -1,6 +1,4 @@
-export type LuaPiObject = {
-    __class__: LuaPiType
-}
+export type LuaPiObject = {}
 
 export type LuaPiO_A = LuaPiObject | any?
 export type LuaPiO_N = LuaPiO_A | number
@@ -15,7 +13,6 @@ export type Weakref<T> = {
 export type LuaPiType = LuaPiObject & {
     __mro__:     {LuaPiType}                              ,
     __bases__:   {LuaPiType}                              ,
-    __fields__:  {[string]:AccessInfo}                    ,
     __name__:    LuaPiO_S                                 ,
     
     __add__:     (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   ,
@@ -26,12 +23,12 @@ export type LuaPiType = LuaPiObject & {
     __mod__:     (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   ,
     __pow__:     (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   ,
     __unm__:     (LuaPiO     		      ) -> LuaPiO_N   ,
-    __band__:    (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   ,
-    __bor__:     (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   ,
-    __bxor__:    (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   ,
-    __bnot__:    (LuaPiO     		      ) -> LuaPiO_N   ,
-    __shl__:     (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   ,
-    __shr__:     (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   ,
+    __band__:    (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   , --unsupported Luau, still can be called
+    __bor__:     (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   , --unsupported Luau, still can be called
+    __bxor__:    (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   , --unsupported Luau, still can be called
+    __bnot__:    (LuaPiO     		      ) -> LuaPiO_N   , --unsupported Luau, still can be called
+    __shl__:     (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   , --unsupported Luau, still can be called
+    __shr__:     (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   , --unsupported Luau, still can be called
     
     __concat__:  (LuaPiO,LuaPiO_S		  ) -> LuaPiO_S   ,
     
@@ -51,7 +48,7 @@ export type LuaPiType = LuaPiObject & {
     
     __new__:     (LuaPiType,...LuaPiO_A   ) -> LuaPiO,
     __init__:    (LuaPiO,...LuaPiO_A      ) -> LuaPiO_A   , --default nil
-    __del__:     (LuaPiO                  ) -> nil        ,
+    __del__:     (LuaPiO                  ) -> nil        , --unsupported Luau, shouldn't be called
     
     __iter__:    (LuaPiO                  ) -> ...LuaPiO_A, --return the iter object, optionally a starting index
     __next__:    (LuaPiO,LuaPiO_A         ) -> LuaPiO_A
@@ -62,11 +59,7 @@ export type LuaPiObjectInfo = {
     protectedcontent: {[any]: any}                      ,
     privatecontent:   {[LuaPiType]:{[any]: any}}        ,
     type:             LuaPiType                         ,
-    frozen:           boolean                           ,
-    unlockprivate:    boolean                           ,
-    authorized:       {[(...any) -> ...any]: LuaPiType?},
-    notauthorized:    {[(...any) -> ...any]: LuaPiType?},
-    authf:            () -> ()?
+    frozen:           boolean                           
 }
 export type AccessInfo = {
     securityaccessor: "public" | "protected" | "private",
@@ -74,10 +67,13 @@ export type AccessInfo = {
     classowns:        boolean                           ,
 }
 export type LuaPiTypeInfo = LuaPiObjectInfo & {
-    mro:             {LuaPiType}          ,
-    bases:           {LuaPiType}          ,
-    fields:          {[string]:AccessInfo},
-    protectedfields: {[string]:any?}      ,
-    privatefields:   {[string]:any?}      ,
-    final:           boolean
+    mro:             {LuaPiType}                        ,
+    bases:           {LuaPiType}                        ,
+    fields:          {[string]:AccessInfo}              ,
+    authorized:       {[(...any) -> ...any]: LuaPiType?},
+    notauthorized:    {[(...any) -> ...any]: LuaPiType?},
+    final:           boolean                            ,
+    classcontent:    {[any]: any}                       ,
+    protclscontent:  {[any]: any}                       ,
+    privclscontent:  {[any]: any}                       
 }

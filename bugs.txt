@@ -1,1 +1,0 @@
-loadstringmod doesnt use load() correctly
