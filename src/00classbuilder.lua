@@ -66,16 +66,21 @@ do
                 local metaclass = nil
                 local isfinal = false
                 for _,v in ipairs(bases) do
-                    if v.cls_builder__type ~= "base" and v.cls_builder__type ~= "metaclass" and v.cls_builder__type ~= "final" then
+                    if type(v) == "string" then
                         return dictset(bases[1],pre,func,cls_name,metaclass,{},isfinal)
-                    end
-                    if v.cls_builder__type == "metaclass" then
-                        metaclass = v.cls
-                    elseif v.cls_builder__type == "final" then
-                        isfinal = true
                     else
-                        table.insert(processed_bases,v.cls)
+                        if v.cls_builder__type ~= "base" and v.cls_builder__type ~= "metaclass" and v.cls_builder__type ~= "final" then
+                            return dictset(bases[1],pre,func,cls_name,metaclass,{},isfinal)
+                        end
+                        if v.cls_builder__type == "metaclass" then
+                            metaclass = v.cls
+                        elseif v.cls_builder__type == "final" then
+                            isfinal = true
+                        else
+                            table.insert(processed_bases,v.cls)
+                        end
                     end
+                    
                 end
                 return function(dict)
                     return dictset(dict,pre,func,cls_name,metaclass,processed_bases,isfinal)

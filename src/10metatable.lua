@@ -1,4 +1,5 @@
 local objinfo = setmetatable({},{__mode="k"})
+local runningmeta = false
 local classget -- (obj, field, scope(nil: public, true: protected, LuaPiType: private in)) -> field
 local LuaPimt = {
 	__metatable = false, --protected table 
@@ -61,13 +62,15 @@ local LuaPimt = {
 		return classget(t,"__bool__",nil)(t)
 	end,
 	__index = function(t,k)
-		return classget(t,"__index__",nil)(t,k)
+		runningmeta = true
+		return classget(t,"__getitem__",nil)(t,k)
 	end,
 	__newindex = function(t,k,v)
+		runningmeta = true
 		if objinfo[t].frozen then
 			error("object is frozen",2)
 		end
-		return classget(t,"__newindex__",nil)(t,k,v)
+		return classget(t,"__setitem__",nil)(t,k,v)
 	end,
 	__eq = function(t,o)
 		return classget(t,"__eq__",nil)(t,o)
@@ -76,7 +79,7 @@ local LuaPimt = {
 		return classget(t,"__lt__",nil)(t,o)
 	end,
 	__le = function(t,o)
-		return classget(t,"__le__",nil)(t,o)
+		return not classget(t,"__gt__",nil)(t,o)
 	end,
 	__call = function(t,...)
 		return classget(t,"__call__",nil)(t,...)

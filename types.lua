@@ -11,10 +11,6 @@ export type Weakref<T> = {
 }
 
 export type LuaPiType = LuaPiObject & {
-    __mro__:     {LuaPiType}                              ,
-    __bases__:   {LuaPiType}                              ,
-    __name__:    LuaPiO_S                                 ,
-    
     __add__:     (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   ,
     __sub__:     (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   ,
     __mul__:     (LuaPiO,LuaPiO_N		  ) -> LuaPiO_N   ,
@@ -67,11 +63,12 @@ export type AccessInfo = {
     classowns:        boolean                           ,
 }
 export type LuaPiTypeInfo = LuaPiObjectInfo & {
+    name:             LuaPiO_S                          ,
     mro:             {LuaPiType}                        ,
     bases:           {LuaPiType}                        ,
     fields:          {[string]:AccessInfo}              ,
-    authorized:       {[(...any) -> ...any]: LuaPiType},
-    notauthorized:    {[(...any) -> ...any]: false},
+    authorized:      {[(...any) -> ...any]: LuaPiType}  ,
+    notauthorized:   {[(...any) -> ...any]: false}      ,
     final:           boolean                            ,
     classcontent:    {[any]: any}                       ,
     protclscontent:  {[any]: any}                       ,
