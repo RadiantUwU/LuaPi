@@ -96,7 +96,7 @@ local LuaPimt = {
 	__ipairs = function(t)
 		return classget(t,"__ipairs__",nil)(t)
 	end,
-	__next = function(t)
-		return classget(t,"__next__",nil)(t)
+	__next = function(t,...)
+		return classget(t,"__next__",nil)(t,...)
 	end,
 }

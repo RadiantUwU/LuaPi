@@ -222,6 +222,58 @@ function __luapi.newSandbox()
         final=final,
         static=static,
         field=field,
-        class=class
+        class=class,
+
+        toboolean=function(o)
+            if isObject(o) then
+                return LuaPimt.__toboolean(o)
+            elseif o then
+                return true
+            else
+                return false
+            end
+        end,
+        tonumber=function(o)
+            if isObject(o) then
+                return LuaPimt.__tonumber(o)
+            else
+                return tonumber(o)
+            end
+        end,
+        tostring=function(o)
+            if isObject(o) then
+                return LuaPimt.__tostring(o)
+            else
+                return tostring(o)
+            end
+        end,
+        ipairs=function(o)
+            if isObject(o) then
+                return LuaPimt.__ipairs(o)
+            else
+                return ipairs(o)
+            end
+        end,
+        pairs=function(o)
+            if isObject(o) then
+                return LuaPimt.__pairs(o)
+            else
+                return pairs(o)
+            end
+        end,
+        iter=function(o)
+            if isObject(o) then
+                return LuaPimt.__pairs(o)
+            else
+                error("not a luapi object")
+            end
+        end,
+        next=function(o,...)
+            if isObject(o) then
+                return LuaPimt.__next(o,...)
+            else
+                return next(o,...)
+            end
+        end,
     }
 end
