@@ -235,6 +235,8 @@ function __luapi.newSandbox()
         static=static,
         field=field,
         class=class,
+        getfenv=getfenv,
+        setfenv=setfenv,
 
         toboolean=function(o)
             if isObject(o) then

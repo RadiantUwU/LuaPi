@@ -101,9 +101,10 @@ local function newtype(typ,name,pubcontent,protcontent,privcontent,bases,fields,
         name=name,
         mro={[1]=o}
     })
+    objinfo[o] = _o
     local mro = _o.mro
-    for _,bases in ipairs(bases) do
-        local _b = objinfo[bases]
+    for _,base in ipairs(bases) do
+        local _b = objinfo[base]
         for _,t in ipairs(_b.mro) do
             local l = rawisin(mro,t)
             if rawequal(l,nil) then
@@ -120,7 +121,7 @@ local function newtype(typ,name,pubcontent,protcontent,privcontent,bases,fields,
     _o.fields = nf
     return o
 end
-local function classget(obj,field,scope)
+function classget(obj,field,scope)
     local typ = objinfo[obj].type
     local mro = objinfo[typ].mro
     if rawequal(scope,nil) then --public

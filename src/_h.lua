@@ -1,4 +1,5 @@
 local _isLuau
+local dbg = require "debugger"
 if game then
     if script then
         _isLuau = true
