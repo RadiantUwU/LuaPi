@@ -33,16 +33,17 @@ local function authf(type, func)
     end
     return r
 end
+local privcontentmt = {__index=function(t,k)
+    local i = {}
+    t[k] = i
+    return i
+end}
 local function newobj(typ)
     local t = setmetatable({},LuaPimt)
     objinfo[t] = {
         contents={},
         protectedcontent={},
-        privatecontent=setmetatable({},__index=function(t,k)
-            local i = {}
-            t[k] = i
-            return i
-        end),
+        privatecontent=setmetatable({},privcontentmt),
         type=typ,
         frozen=false
     }
@@ -126,7 +127,7 @@ local function classget(obj,field,scope)
         for _,t in ipairs(mro) do
             local _t = objinfo[t]
             local v = _t.classcontent[field]
-            if !rawequal(v,nil) then
+            if not rawequal(v,nil) then
                 return v
             end
         end
@@ -134,7 +135,7 @@ local function classget(obj,field,scope)
         for _,t in ipairs(mro) do
             local _t = objinfo[t]
             local v = _t.protclscontent[field]
-            if !rawequal(v,nil) then
+            if not rawequal(v,nil) then
                 return v
             end
         end

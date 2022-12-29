@@ -62,11 +62,11 @@ local LuaPimt = {
 		return classget(t,"__bool__",nil)(t)
 	end,
 	__index = function(t,k)
-		runningmeta = true
+		runningmeta = 3
 		return classget(t,"__getitem__",nil)(t,k)
 	end,
 	__newindex = function(t,k,v)
-		runningmeta = true
+		runningmeta = 3
 		if objinfo[t].frozen then
 			error("object is frozen",2)
 		end

@@ -10,7 +10,7 @@ else
         return debug.getinfo(level + 1, "f").func
     end
     function setfenv(fn, env)
-        if type(fn) != "function" then
+        if type(fn) ~= "function" then
             fn = getfunc(fn + 1)
         end
         local i = 1
@@ -27,7 +27,7 @@ else
         return fn
     end
     function getfenv(fn)
-        if type(fn) != "function" then
+        if type(fn) ~= "function" then
             fn = getfunc(fn + 1)
         end
         local i = 1

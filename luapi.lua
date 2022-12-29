@@ -186,7 +186,7 @@ else
         return debug.getinfo(level + 1, "f").func
     end
     function setfenv(fn, env)
-        if type(fn) != "function" then
+        if type(fn) ~= "function" then
             fn = getfunc(fn + 1)
         end
         local i = 1
@@ -203,7 +203,7 @@ else
         return fn
     end
     function getfenv(fn)
-        if type(fn) != "function" then
+        if type(fn) ~= "function" then
             fn = getfunc(fn + 1)
         end
         local i = 1
@@ -6091,11 +6091,11 @@ local LuaPimt = {
 		return classget(t,"__bool__",nil)(t)
 	end,
 	__index = function(t,k)
-		runningmeta = true
+		runningmeta = 3
 		return classget(t,"__getitem__",nil)(t,k)
 	end,
 	__newindex = function(t,k,v)
-		runningmeta = true
+		runningmeta = 3
 		if objinfo[t].frozen then
 			error("object is frozen",2)
 		end
@@ -6169,16 +6169,17 @@ local function authf(type, func)
     end
     return r
 end
+local privcontentmt = {__index=function(t,k)
+    local i = {}
+    t[k] = i
+    return i
+end}
 local function newobj(typ)
     local t = setmetatable({},LuaPimt)
     objinfo[t] = {
         contents={},
         protectedcontent={},
-        privatecontent=setmetatable({},__index=function(t,k)
-            local i = {}
-            t[k] = i
-            return i
-        end),
+        privatecontent=setmetatable({},privcontentmt),
         type=typ,
         frozen=false
     }
@@ -6262,7 +6263,7 @@ local function classget(obj,field,scope)
         for _,t in ipairs(mro) do
             local _t = objinfo[t]
             local v = _t.classcontent[field]
-            if !rawequal(v,nil) then
+            if not rawequal(v,nil) then
                 return v
             end
         end
@@ -6270,7 +6271,7 @@ local function classget(obj,field,scope)
         for _,t in ipairs(mro) do
             local _t = objinfo[t]
             local v = _t.protclscontent[field]
-            if !rawequal(v,nil) then
+            if not rawequal(v,nil) then
                 return v
             end
         end
@@ -6308,6 +6309,7 @@ function __luapi.newSandbox()
     local field = ClassBuilder.field
     local object
     local metatype
+    local _metatype
     local class = ClassBuilder.class_func_custom(function(clsname,metacls,bases,isfinal,dict)
         metacls = metacls or metatype
         local k = rawisin(bases,object)
@@ -6351,10 +6353,10 @@ function __luapi.newSandbox()
     object = class "object" {
         [protected "setFrozenState"]=function(self,val)
             objinfo[self].frozen = val
-        end
+        end,
         __str__=function(self)
             return "<LuaPi object of type \""..objinfo[objinfo[self].type].name.."\">"
-        end
+        end,
         __num__=invalidfunc("tonumber"),
         __add__=invalidfunc("add"),
         __sub__=invalidfunc("subtract"),
@@ -6394,7 +6396,7 @@ function __luapi.newSandbox()
                 end
             elseif field.accessor == "protected" then
                 -- do you have access to it?
-                local auth_results = authf(objinfo[t].type,getfunc(({[false]=2,[true]=3})[rm]))
+                local auth_results = authf(objinfo[t].type,getfunc(({[false]=2,[rm]=rm})[rm]))
                 assert(auth_results ~= nil,"security error")
                 --who owns it?
                 if field.classowns then
@@ -6409,7 +6411,7 @@ function __luapi.newSandbox()
                 end
             elseif field.accessor == "private" then
                 -- do you have access to it?
-                local auth_results = authf(objinfo[t].type,getfunc(({[false]=2,[true]=3})[rm]))
+                local auth_results = authf(objinfo[t].type,getfunc(({[false]=2,[rm]=rm})[rm]))
                 assert(auth_results ~= nil,"security error")
                 --who owns it?
                 if field.classowns then
@@ -6423,7 +6425,7 @@ function __luapi.newSandbox()
                     return v
                 end
             end
-        end
+        end,
         __setitem__=function(t,k,v)
             --check metamethod
             local rm = runningmeta
@@ -6482,8 +6484,8 @@ function __luapi.newSandbox()
         __new__=function(cls,...)
             return newobj(cls)
         end,
-        __init__=function(o,...) end
-        __del__=function(o,...) end
+        __init__=function(o,...) end,
+        __del__=function(o,...) end,
         __iter__=invalidfunc("iteration"),
         __next__=invalidfunc("next"),
         __pairs__=invalidfunc("pairs"),
@@ -6501,10 +6503,21 @@ function __luapi.newSandbox()
                 cls.__init__(o,...)
             end
             return o
+        end,
+        __getitem__=function(cls,k)
+            local _cls = objinfo[cls]
+            if rawget(_cls.fields,k) ~= nil then
+                local f = _cls.fields[k]
+            else
+                if type(rm) == "number" then
+                    rm = rm + 1
+                end
+                return objinfo[object].classcontent.__getitem__(cls,k)
+            end
         end
     }
     local _object = objinfo[object]
-    local _metatype = objinfo[metatype]
+    _metatype = objinfo[metatype]
     _object.type = metatype
     _metatype.type = metatype
     _object.frozen = true
@@ -6581,6 +6594,7 @@ end
 	./src/_f.lua
 ]]--====================
 
+end
 end
 if _isLuau then
     return loadLuaPiModule()
