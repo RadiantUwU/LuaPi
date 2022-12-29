@@ -1,5 +1,4 @@
 local objinfo = setmetatable({},{__mode="k"})
-local authf --assertion that function is authorized
 local classget -- (obj, field, scope(nil: public, true: protected, LuaPiType: private in)) -> field
 local LuaPimt = {
 	__metatable = false, --protected table 
@@ -23,7 +22,7 @@ local LuaPimt = {
 		return classget(t,"__pow__",nil)(t,o)
 	end,
 	__unm = function(t)
-		return classget(t,"__unm__",nil)(t,o)
+		return classget(t,"__unm__",nil)(t)
 	end,
 	__concat = function(t,o)
 		return classget(t,"__concat__",nil)(t,o)
@@ -41,7 +40,7 @@ local LuaPimt = {
 		return classget(t,"__bxor__",nil)(t,o)
 	end,
 	__bnot = function(t)
-		return classget(t,"__bnot__",nil)(t,o)
+		return classget(t,"__bnot__",nil)(t)
 	end,
 	__lshift = function(t,o)
 		return classget(t,"__lshift__",nil)(t,o)
@@ -50,22 +49,25 @@ local LuaPimt = {
 		return classget(t,"__rshift__",nil)(t,o)
 	end,
 	__tostring = function(t)
-		return classget(t,"__str__",nil)(t,o)
+		return classget(t,"__str__",nil)(t)
 	end,
 	__len = function(t)
-		return classget(t,"__len__",nil)(t,o)
+		return classget(t,"__len__",nil)(t)
 	end,
 	__tonumber = function(t)
-		return classget(t,"__num__",nil)(t,o)
+		return classget(t,"__num__",nil)(t)
 	end,
 	__toboolean = function(t)
-		return classget(t,"__bool__",nil)(t,o)
+		return classget(t,"__bool__",nil)(t)
 	end,
 	__index = function(t,k)
-		return classget(t,"__index__",nil)(t,o)
+		return classget(t,"__index__",nil)(t,k)
 	end,
 	__newindex = function(t,k,v)
-		return classget(t,"__newindex__",nil)(t,o)
+		if objinfo[t].frozen then
+			error("object is frozen",2)
+		end
+		return classget(t,"__newindex__",nil)(t,k,v)
 	end,
 	__eq = function(t,o)
 		return classget(t,"__eq__",nil)(t,o)
